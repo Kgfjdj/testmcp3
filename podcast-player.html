@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增城早晨·与你同行 | 个性化播客</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Inter', sans-serif;
+            background: #ffffff;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(254, 17, 16, 0.05) 0%, rgba(254, 17, 16, 0.02) 100%);
+            position: relative;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .fade-in.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .accent-text {
+            color: #FE1110;
+        }
+
+        .highlight-bg {
+            background: linear-gradient(135deg, rgba(254, 17, 16, 0.95) 0%, rgba(254, 17, 16, 0.85) 100%);
+            color: white;
+        }
+
+        .number-display {
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            background: linear-gradient(135deg, #FE1110 0%, rgba(254, 17, 16, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle-en {
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #999;
+        }
+
+        .player-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            padding: 3rem;
+            max-width: 1200px;
+            margin: 4rem auto;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FE1110 0%, rgba(254, 17, 16, 0.8) 100%);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FE1110 0%, rgba(254, 17, 16, 0.9) 100%);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(254, 17, 16, 0.3);
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(254, 17, 16, 0.4);
+        }
+
+        .news-card {
+            background: white;
+            border: 2px solid #f5f5f5;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #FE1110 0%, rgba(254, 17, 16, 0.6) 100%);
+            transform: scaleY(0);
+            transition: transform 0.4s ease;
+        }
+
+        .news-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .news-card:hover {
+            border-color: rgba(254, 17, 16, 0.2);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .weather-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, rgba(254, 17, 16, 0.1) 0%, rgba(254, 17, 16, 0.05) 100%);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(254, 17, 16, 0.08);
+            color: #FE1110;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(254, 17, 16, 0.2) 50%, transparent 100%);
+            margin: 4rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .number-display {
+                font-size: 4rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .player-container {
+                padding: 2rem;
+                margin: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="fade-in">
+                <div class="subtitle-en mb-4">Personal Podcast System</div>
+                <h1 class="text-6xl md:text-8xl font-black mb-6">
+                    增城早晨<br>
+                    <span class="accent-text">与你同行</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 mb-8">为你量身定制的清晨播客</p>
+                <div class="flex items-center justify-center gap-8 text-sm text-gray-500">
+                    <div><i class="far fa-calendar mr-2"></i>2025.10.27</div>
+                    <div><i class="far fa-clock mr-2"></i>约3分30秒</div>
+                    <div><i class="fas fa-map-marker-alt mr-2"></i>广州市增城区</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Section -->
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        <div class="player-container fade-in">
+            <div class="grid md:grid-cols-3 gap-8 items-center mb-8">
+                <div class="md:col-span-2">
+                    <div class="subtitle-en mb-2">Now Playing</div>
+                    <h2 class="text-4xl font-black mb-3">增城早晨·与你同行</h2>
+                    <p class="text-gray-600">主播: 小雨 | 温暖亲切型女声</p>
+                </div>
+                <div class="flex justify-center md:justify-end">
+                    <button class="play-button" id="playButton">
+                        <i class="fas fa-play" id="playIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-500 mt-2">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <audio id="audioPlayer" preload="metadata">
+                <source src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Feffect%2F054e63a1aea8b8b8fb59134e46315b30.mp3?Expires=1761640995&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=nepmrzzNXx59fo0w%2BFdCEEHJSOo%3D" type="audio/mpeg">
+            </audio>
+        </div>
+    </div>
+
+    <!-- Weather Section -->
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        <div class="fade-in">
+            <div class="subtitle-en mb-2">Weather Forecast</div>
+            <h2 class="section-title mb-12">今日天气</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="highlight-bg rounded-3xl p-8 flex items-center gap-8">
+                    <div class="weather-icon bg-white bg-opacity-20">
+                        <i class="fas fa-cloud-sun text-white"></i>
+                    </div>
+                    <div>
+                        <div class="number-display text-white" style="background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">18-27°</div>
+                        <div class="text-xl font-bold text-white opacity-90">多云天气</div>
+                        <div class="text-white opacity-75 mt-2">北风 1-3级</div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-3xl p-8">
+                    <h3 class="text-2xl font-bold mb-6">穿衣建议</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-sun text-2xl accent-text mt-1"></i>
+                            <div>
+                                <div class="font-bold mb-1">早晚 18°C</div>
+                                <p class="text-gray-600">建议穿薄外套或长袖衬衫</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-temperature-high text-2xl accent-text mt-1"></i>
+                            <div>
+                                <div class="font-bold mb-1">中午 27°C</div>
+                                <p class="text-gray-600">准备轻便外套,方便脱穿</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white border-2 border-gray-100 rounded-2xl p-4 text-center">
+                    <div class="text-sm text-gray-500 mb-2">10月28日</div>
+                    <i class="fas fa-cloud text-3xl accent-text mb-2"></i>
+                    <div class="font-bold">19-28°</div>
+                </div>
+                <div class="bg-white border-2 border-gray-100 rounded-2xl p-4 text-center">
+                    <div class="text-sm text-gray-500 mb-2">10月29日</div>
+                    <i class="fas fa-cloud text-3xl accent-text mb-2"></i>
+                    <div class="font-bold">20-28°</div>
+                </div>
+                <div class="bg-white border-2 border-gray-100 rounded-2xl p-4 text-center">
+                    <div class="text-sm text-gray-500 mb-2">10月30日</div>
+                    <i class="fas fa-cloud-sun text-3xl accent-text mb-2"></i>
+                    <div class="font-bold">21-29°</div>
+                </div>
+                <div class="bg-white border-2 border-gray-100 rounded-2xl p-4 text-center">
+                    <div class="text-sm text-gray-500 mb-2">未来趋势</div>
+                    <i class="fas fa-arrow-up text-3xl accent-text mb-2"></i>
+                    <div class="font-bold">逐渐回暖</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider max-w-7xl mx-auto px-6"></div>
+
+    <!-- News Section -->
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        <div class="fade-in">
+            <div class="subtitle-en mb-2">Local News</div>
+            <h2 class="section-title mb-12">本地新闻速览</h2>
+
+            <div class="news-card">
+                <div class="flex items-start gap-6">
+                    <div class="number-display" style="font-size: 4rem;">01</div>
+                    <div class="flex-1">
+                        <div class="flex gap-2 mb-3">
+                            <span class="tag"><i class="fas fa-flask mr-1"></i>科技创新</span>
+                            <span class="tag"><i class="fas fa-star mr-1"></i>增城专场</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">科技之光闪耀增城</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            就在上周,增城举办了"智创增城·材料赋能未来"科创下午茶活动。广州增城的科研团队成功研发出了能达到零下269摄氏度的超低温制冷机,只比绝对零度高4度!这个技术水平已经达到国际领先。这款制冷机由氢合科技公司开发,已经在医疗设备、量子计算等领域开始应用。
+                        </p>
+                        <div class="mt-4 flex items-center gap-6 text-sm text-gray-500">
+                            <span><i class="far fa-building mr-2"></i>氢合科技(广州)有限公司</span>
+                            <span><i class="fas fa-temperature-low mr-2"></i>-269°C 超低温</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="news-card">
+                <div class="flex items-start gap-6">
+                    <div class="number-display" style="font-size: 4rem;">02</div>
+                    <div class="flex-1">
+                        <div class="flex gap-2 mb-3">
+                            <span class="tag"><i class="fas fa-fire mr-1"></i>十五运会</span>
+                            <span class="tag"><i class="fas fa-robot mr-1"></i>科技赋能</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">十五运会火炬传递即将开启</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            今天上午,十五运会火炬传递新闻发布会在广州举行。广州的火炬传递路线以"千年羊城 新彩广州"为主题,从镇海楼出发,最后在海心沙亚运公园收火。最吸引人的是,传递中会使用无人驾驶方式穿行核心老城区,古老与未来在这里完美交融。
+                        </p>
+                        <div class="mt-4 flex items-center gap-6 text-sm text-gray-500">
+                            <span><i class="fas fa-route mr-2"></i>镇海楼 → 海心沙</span>
+                            <span><i class="fas fa-car mr-2"></i>无人驾驶传递</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="news-card">
+                <div class="flex items-start gap-6">
+                    <div class="number-display" style="font-size: 4rem;">03</div>
+                    <div class="flex-1">
+                        <div class="flex gap-2 mb-3">
+                            <span class="tag"><i class="fas fa-mountain mr-1"></i>传统节日</span>
+                            <span class="tag"><i class="fas fa-heart mr-1"></i>安全提示</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">重阳登高温馨提示</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            这个周三10月29日就是重阳节了。广州市明确了11个登高点,提醒大家注意安全。秋高气爽,正是登高望远的好时节,有兴趣的朋友可以提前做好准备,和家人一起去感受传统节日的魅力。
+                        </p>
+                        <div class="mt-4 flex items-center gap-6 text-sm text-gray-500">
+                            <span><i class="far fa-calendar-alt mr-2"></i>10月29日(周三)</span>
+                            <span><i class="fas fa-map-marked-alt mr-2"></i>11个登高点</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="news-card">
+                <div class="flex items-start gap-6">
+                    <div class="number-display" style="font-size: 4rem;">04</div>
+                    <div class="flex-1">
+                        <div class="flex gap-2 mb-3">
+                            <span class="tag"><i class="fas fa-users mr-1"></i>民生服务</span>
+                            <span class="tag"><i class="fas fa-handshake mr-1"></i>政务公开</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">增城区域治理持续优化</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            增城区各镇继续做好民生服务工作,小楼镇10月份的镇领导接访日程已经公布,每周一都有不同领导接待群众来访。这种制度化的安排,让老百姓有问题能找到人,有困难能得到帮助,这才是真正的为民服务。
+                        </p>
+                        <div class="mt-4 flex items-center gap-6 text-sm text-gray-500">
+                            <span><i class="fas fa-user-tie mr-2"></i>镇领导接访</span>
+                            <span><i class="far fa-calendar-check mr-2"></i>每周一定期</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider max-w-7xl mx-auto px-6"></div>
+
+    <!-- Transcript Section -->
+    <div class="max-w-7xl mx-auto px-6 py-12 mb-20">
+        <div class="fade-in">
+            <div class="subtitle-en mb-2">Full Transcript</div>
+            <h2 class="section-title mb-12">完整播客文稿</h2>
+
+            <div class="bg-gray-50 rounded-3xl p-8 md:p-12 leading-relaxed text-gray-700">
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold accent-text mb-3">开场问候</h3>
+                    <p class="text-lg leading-loose">
+                        早上好!欢迎收听《增城早晨·与你同行》,我是你们的老朋友小雨。今天是2025年10月27日,星期一。在这个全新的一周,让我为你带来专属于增城的清晨问候。窗外的阳光是不是已经洒进了你的房间?让我们一起开启美好的一天吧!
+                    </p>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold accent-text mb-3">位置与天气播报</h3>
+                    <p class="text-lg leading-loose">
+                        你现在所在的位置是广州市增城区,坐标东经113.81度,北纬23.26度。这里是广州东部的一颗明珠,既有现代都市的活力,又保留着岭南水乡的韵味。
+                    </p>
+                    <p class="text-lg leading-loose mt-4">
+                        说到今天的天气,真是太棒了!今天是多云天气,气温在18到27摄氏度之间,北风1到3级,非常舒适宜人。这样的天气最适合出门走走了。
+                    </p>
+                    <p class="text-lg leading-loose mt-4">
+                        <strong>穿衣建议来了!</strong> 早晚18度左右会有点凉意,建议穿上薄外套或长袖衬衫。中午27度比较温暖,可以准备件轻便的外套,方便脱穿。总的来说,秋装搭配最合适不过了。
+                    </p>
+                    <p class="text-lg leading-loose mt-4">
+                        顺便告诉大家,未来几天天气都不错,多云为主,气温逐渐回升到29度。这个季节的增城,真是出游的好时光!
+                    </p>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold accent-text mb-3">本地新闻速览</h3>
+                    <p class="text-lg leading-loose">
+                        现在进入我们的本地新闻时间,看看增城和广州最近都发生了哪些大事。
+                    </p>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold accent-text mb-3">结束语</h3>
+                    <p class="text-lg leading-loose">
+                        好了,今天的播客就到这里。在这个充满希望的周一早晨,希望这些信息能为你的一天增添一点色彩。无论你是在上班路上,还是在准备早餐,都祝你拥有美好的一天!
+                    </p>
+                    <p class="text-lg leading-loose mt-4">
+                        记得,穿好衣服,带上好心情,增城的每一天都值得期待!我们下期再见,拜拜!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-12">
+        <div class="max-w-7xl mx-auto px-6 text-center text-gray-600">
+            <p class="mb-2">© 2025 增城早晨·与你同行 | 个性化播客系统</p>
+            <p class="text-sm">基于位置信息、天气数据和本地资讯自动生成</p>
+            <div class="mt-4 flex justify-center gap-6 text-sm">
+                <span><i class="fas fa-map-marker-alt mr-2 accent-text"></i>广州市增城区</span>
+                <span><i class="far fa-calendar mr-2 accent-text"></i>2025年10月27日</span>
+                <span><i class="fas fa-microphone mr-2 accent-text"></i>AI生成音频</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll Animation
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Audio Player
+        const audio = document.getElementById('audioPlayer');
+        const playButton = document.getElementById('playButton');
+        const playIcon = document.getElementById('playIcon');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const currentTime = document.getElementById('currentTime');
+        const duration = document.getElementById('duration');
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        playButton.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playIcon.className = 'fas fa-pause';
+            } else {
+                audio.pause();
+                playIcon.className = 'fas fa-play';
+            }
+        });
+
+        audio.addEventListener('loadedmetadata', () => {
+            duration.textContent = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressFill.style.width = progress + '%';
+            currentTime.textContent = formatTime(audio.currentTime);
+        });
+
+        progressBar.addEventListener('click', (e) => {
+            const rect = progressBar.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = percent * audio.duration;
+        });
+
+        audio.addEventListener('ended', () => {
+            playIcon.className = 'fas fa-play';
+        });
+
+        // Initial animation
+        setTimeout(() => {
+            document.querySelector('.hero-section .fade-in').classList.add('active');
+        }, 300);
+    </script>
+</body>
+</html>
